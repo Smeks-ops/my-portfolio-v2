@@ -1,0 +1,32 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite src",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "keywords": [],
+  "author": "Osemeke Echenim",
+  "license": "ISC",
+  "dependencies": {
+    "@emailjs/browser": "^3.6.2",
+    "@popperjs/core": "^2.11.5",
+    "aos": "^2.3.4",
+    "bootstrap": "^5.1.3",
+    "bootstrap-icons": "^1.8.1",
+    "curtainsjs": "^8.1.3",
+    "dotenv": "^16.0.0",
+    "sass": "^1.51.0",
+    "typed.js": "^2.0.12",
+    "vite": "^2.9.6",
+    "vite-plugin-ssr": "^0.3.64"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^4.1.3",
+    "postcss-load-config": "^3.1.4"
+  }
+}

@@ -1,0 +1,104 @@
+const contactForm = document.querySelector('#contact_form');
+const nameInput = document.querySelector('#name');
+const emailInput = document.querySelector('#email');
+const subjectInput = document.querySelector('#subject');
+const messageInput = document.querySelector('#message');
+const submitButton = document.querySelector('#send');
+const thanksMessage = document.querySelector('.thanks');
+const spinner = document.querySelector('.spinner-border');
+const charCounter = document.querySelector('.valid-feedback');
+
+const emailPattern =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+const warningClass = 'is-invalid';
+const successClass = 'is-valid';
+
+// function to add/remove classes
+function setUpClasses(e, isValid) {
+  const input = e.target;
+
+  if (isValid) {
+    input.classList.add(successClass);
+    input.classList.remove(warningClass);
+  } else {
+    input.classList.add(warningClass);
+    input.classList.remove(successClass);
+  }
+}
+
+nameInput.addEventListener('keyup', e => {
+  setUpClasses(e, e.target.value.length > 1 ? true : false);
+  checkAllInputs();
+});
+
+emailInput.addEventListener('keyup', e => {
+  setUpClasses(e, e.target.value.match(emailPattern) ? true : false);
+  checkAllInputs();
+});
+
+subjectInput.addEventListener('keyup', e => {
+  setUpClasses(e, e.target.value.length > 2 ? true : false);
+  checkAllInputs();
+});
+
+messageInput.addEventListener('keyup', e => {
+  setUpClasses(e, e.target.value.split(' ').length > 5 ? true : false);
+  checkAllInputs();
+  charCounter.textContent = `${messageInput.value.length} / 400`;
+});
+
+// submitButton.disabled = fal
+function checkAllInputs() {
+  submitButton.disabled =
+    nameInput.value.length > 1 &&
+    emailInput.value.match(emailPattern) &&
+    subjectInput.value.length > 2 &&
+    messageInput.value.split(' ').length > 5
+      ? false
+      : true;
+}
+
+// sending the email
+import '@emailjs/browser/dist/email';
+const emailjsPublicKey = fixKeyStartWithNumber(
+  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+);
+const contactService = import.meta.env.VITE_CONTACT_SERVICE;
+const templateName = import.meta.env.VITE_TEMPLATE_NAME;
+
+function fixKeyStartWithNumber(key) {
+  return key
+    .split('')
+    .filter(char => char !== "'")
+    .join('');
+}
+
+// Send Message
+(function () {
+  emailjs.init(emailjsPublicKey);
+})();
+
+contactForm.addEventListener('submit', e => {
+  e.preventDefault();
+  submitButton.style.display = 'none';
+  spinner.style.display = 'inline-block';
+
+  // send email
+  emailjs.sendForm(contactService, templateName, e.target).then(
+    function () {
+      spinner.style.display = 'none';
+      thanksMessage.style.display = 'block';
+      e.target.reset();
+      [nameInput, emailInput, subjectInput, messageInput].forEach(input => {
+        input.classList.remove(successClass);
+      });
+    },
+    function (err) {
+      alert('Something went wrong!! Please try again.');
+    }
+  );
+});
+
+// clear form on load page
+contactForm.reset();
